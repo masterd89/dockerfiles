@@ -1,6 +1,10 @@
 FROM debian:buster-slim
 ENV DEBIAN_FRONTEND=noninteractive
 
+
+ARG PGID
+ARG PUID
+
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     wget \
@@ -48,7 +52,7 @@ RUN pip3 install \
 
 RUN mkdir -p /mopidy
 RUN touch /IS_CONTAINER
-RUN useradd -ms /bin/bash mopidy
+RUN useradd -ms /bin/bash -u $PUID --g $PGID mopidy 
 RUN sh -c 'echo "mopidy ALL=NOPASSWD: /usr/local/lib/python3.7/dist-packages/mopidy_iris/system.sh, /usr/bin/apt*" >> /etc/sudoers'
 RUN sed -i 's+--config .*mopidy.conf+--config /mopidy/mopidy.conf+g' /usr/local/lib/python3.7/dist-packages/mopidy_iris/system.sh
 
